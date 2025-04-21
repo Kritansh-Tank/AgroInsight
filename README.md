@@ -231,8 +231,28 @@ Potential future enhancements include:
 
 - **Market Data Analysis**
 
-![Market Data Analysis](docs/images/Market Data Analysis.png)
+![Market Data Analysis](docs/images/Market_Data_Analysis.png)
 
 - **Weather Data & Agricultural Impacts**
 
-![Weather Data & Agricultural Impacts](docs/images/Weather Data & Agricultural Impacts.png)
+![Weather Data & Agricultural Impacts](docs/images/Weather_Data.png)
+
+- **Farm Analysis**
+
+![Farm Analysis](docs/images/Farm_Analysis.png)
+
+- **Farm Recommendations**
+
+![Farm Recommendations](docs/images/Farm_Recommendations.png)
+
+- **Farm Sustainability Comparison**
+
+![Farm Sustainability Comparisone](docs/images/Sustainability_Comparison.png)
+
+- **Agent Communication**
+
+![Agent Communication](docs/images/Agent_Communication.png)
+
+- **Ollama LLM Integration**
+
+![Ollama LLM Integration](docs/images/Ollama_LLM_Integration.png)
