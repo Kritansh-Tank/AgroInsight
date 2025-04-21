@@ -223,5 +223,16 @@ Potential future enhancements include:
 
 [MIT License](LICENSE)
 
-## Acknowledgments
+## Demo
 
+- **Home**
+
+![Home](docs/images/Home.png)
+
+- **Market Data Analysis**
+
+![Market Data Analysis](docs/images/Market Data Analysis.png)
+
+- **Weather Data & Agricultural Impacts**
+
+![Weather Data & Agricultural Impacts](docs/images/Weather Data & Agricultural Impacts.png)
