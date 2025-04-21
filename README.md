@@ -54,19 +54,6 @@ The system follows a multi-agent architecture with the following components:
 - langchain-openai
 - openai
 
-## Installation
-
-1. Clone the repository:
-```
-git clone <repository-url>
-cd PS-3_AgroInsight
-```
-
-2. Install dependencies:
-```
-pip install -r requirements.txt
-```
-
 ## Ollama Integration
 
 The system integrates with Ollama to provide enhanced AI-driven analysis and recommendations:
@@ -238,4 +225,3 @@ Potential future enhancements include:
 
 ## Acknowledgments
 
-This project was developed as part of a hackathon challenge on data-driven AI for sustainable farming. 
