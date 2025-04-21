@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroInsight</title>
+  </head>
+  <body>
+    {% extends "layout.html" %} {% block title %}Coming Soon - {{ feature }}{%
+    endblock %} {% block content %}
+    <section class="section">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-8">
+            <div class="notification is-info">
+              <div class="content has-text-centered">
+                <h1 class="title">
+                  <i class="fas fa-tools mr-2"></i> Coming Soon
+                </h1>
+                <h2 class="subtitle">{{ feature }} is under development</h2>
+                <p class="mt-4">
+                  We're working hard to implement this feature. Please check
+                  back later!
+                </p>
+                <div class="mt-6">
+                  <a href="{{ url_for('index') }}" class="button is-primary">
+                    <i class="fas fa-home mr-2"></i> Return to Dashboard
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endblock %}
+  </body>
+</html>

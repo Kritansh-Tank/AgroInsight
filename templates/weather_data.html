@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroInsight</title>
+  </head>
+  <body>
+
+{% extends "layout.html" %}
+
+{% block title %}Weather Data{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-cloud-sun me-2"></i>Weather Data & Agricultural Impacts</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('weather_data') }}">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="location" class="form-label">Region</label>
+                            <select class="form-select" id="location" name="location">
+                                <option value="" {% if not location %}selected{% endif %}>Select a region</option>
+                                {% for region in regions %}
+                                    <option value="{{ region }}" {% if location == region %}selected{% endif %}>{{ region|title }} Region</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="forecast_days" class="form-label">Forecast Days</label>
+                            <select class="form-select" id="forecast_days" name="forecast_days">
+                                <option value="1" {% if forecast_days == 1 %}selected{% endif %}>1 Day</option>
+                                <option value="3" {% if forecast_days == 3 %}selected{% endif %}>3 Days</option>
+                                <option value="7" {% if forecast_days == 7 or not forecast_days %}selected{% endif %}>7 Days</option>
+                                <option value="14" {% if forecast_days == 14 %}selected{% endif %}>14 Days</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="include_historical" class="form-label">Include Historical</label>
+                            <select class="form-select" id="include_historical" name="include_historical">
+                                <option value="no" {% if include_historical == 'no' or not include_historical %}selected{% endif %}>No</option>
+                                <option value="7days" {% if include_historical == '7days' %}selected{% endif %}>Past 7 Days</option>
+                                <option value="30days" {% if include_historical == '30days' %}selected{% endif %}>Past 30 Days</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Get Weather Data
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if weather_data %}
+<div class="row">
+    <!-- Current Weather Section -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-sun me-2"></i>Current Weather Conditions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="weather-icon me-3">
+                        {% if weather_data.current_weather.condition == 'Clear' %}
+                            <i class="fas fa-sun fa-3x text-warning"></i>
+                        {% elif weather_data.current_weather.condition == 'Partly Cloudy' %}
+                            <i class="fas fa-cloud-sun fa-3x text-primary"></i>
+                        {% elif weather_data.current_weather.condition == 'Cloudy' %}
+                            <i class="fas fa-cloud fa-3x text-secondary"></i>
+                        {% elif weather_data.current_weather.condition == 'Rain' or weather_data.current_weather.condition == 'Showers' %}
+                            <i class="fas fa-cloud-rain fa-3x text-info"></i>
+                        {% elif weather_data.current_weather.condition == 'Thunderstorm' %}
+                            <i class="fas fa-bolt fa-3x text-warning"></i>
+                        {% elif weather_data.current_weather.condition == 'Snow' %}
+                            <i class="fas fa-snowflake fa-3x text-info"></i>
+                        {% else %}
+                            <i class="fas fa-cloud fa-3x text-secondary"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h2 class="mb-0">{{ weather_data.current_weather.temperature_c }}°C</h2>
+                        <p class="mb-0">{{ weather_data.current_weather.condition }}</p>
+                        <small class="text-muted">{{ location }} • {{ weather_data.current_weather.timestamp|default('Now') }}</small>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <p><i class="fas fa-water text-primary me-2"></i>Rainfall: {{ weather_data.current_weather.rainfall_mm|default(weather_data.current_weather.rainfall, '--') }} mm</p>
+                    </div>
+                    <div class="col-6">
+                        <p><i class="fas fa-leaf text-success me-2"></i>Season: {{ weather_data.current_weather.season|default('Current')|capitalize }}</p>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6 class="border-bottom pb-2">Agricultural Impact</h6>
+                    <p>{{ weather_data.agricultural_impact.current_impact|default(weather_data.agricultural_impact.overall_impact, 'No impact data available.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Forecast Section -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Weather Forecast</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Condition</th>
+                                <th>Temp (°C)</th>
+                                <th>Rain (mm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in weather_data.forecast %}
+                            <tr>
+                                <td>{{ day.date|default(day.day) }}</td>
+                                <td>
+                                    {% if day.condition == 'Clear' %}
+                                        <i class="fas fa-sun text-warning"></i>
+                                    {% elif day.condition == 'Partly Cloudy' %}
+                                        <i class="fas fa-cloud-sun text-primary"></i>
+                                    {% elif day.condition == 'Cloudy' %}
+                                        <i class="fas fa-cloud text-secondary"></i>
+                                    {% elif day.condition == 'Rain' or day.condition == 'Showers' %}
+                                        <i class="fas fa-cloud-rain text-info"></i>
+                                    {% elif day.condition == 'Thunderstorm' %}
+                                        <i class="fas fa-bolt text-warning"></i>
+                                    {% elif day.condition == 'Snow' %}
+                                        <i class="fas fa-snowflake text-info"></i>
+                                    {% else %}
+                                        <i class="fas fa-cloud text-secondary"></i>
+                                    {% endif %}
+                                    {{ day.condition }}
+                                </td>
+                                <td>{{ day.temperature|default(day.temperature_high_c, '--') }}</td>
+                                <td>{{ day.rainfall|default(day.rainfall_mm, '--') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <h6 class="border-bottom pb-2">Forecast Impact</h6>
+                    <p>{{ weather_data.agricultural_impact.forecast_impact|default(weather_data.agricultural_impact.rainfall_impact, 'No forecast impact data available.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recommendations Section -->
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Weather-Based Recommendations</h5>
+            </div>
+            <div class="card-body">
+                {% if weather_data.recommendations %}
+                    <div class="row">
+                        {% for category, recs in weather_data.recommendations.items() %}
+                            <div class="col-md-4 mb-3">
+                                <h6 class="border-bottom pb-2">{{ category|replace('_', ' ')|title }}</h6>
+                                <ul class="list-unstyled">
+                                    {% for rec in recs %}
+                                        <li class="mb-2">
+                                            <div class="d-flex">
+                                                <div class="me-2"><i class="fas fa-check-circle text-success"></i></div>
+                                                <div>
+                                                    <strong>{{ rec.action }}</strong>
+                                                    <p class="mb-1 small">{{ rec.reason|default('') }}</p>
+                                                    <div class="text-muted small">
+                                                        <span class="badge bg-info">Sustainability Impact: {{ rec.sustainability_impact|default('Medium') }}</span>
+                                                        <span class="badge bg-secondary">Confidence: {{ rec.confidence|default('--') }}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% elif weather_data.agricultural_impact.recommendations %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="list-unstyled">
+                                {% for rec in weather_data.agricultural_impact.recommendations %}
+                                    <li class="mb-2">
+                                        <div class="d-flex">
+                                            <div class="me-2"><i class="fas fa-check-circle text-success"></i></div>
+                                            <div>
+                                                <strong>{{ rec.issue|default('Recommendation') }}</strong>
+                                                <p class="mb-1">{{ rec.action }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center">No specific recommendations available for the current weather conditions.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Historical Weather Section -->
+{% if weather_data.historical_data %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Historical Weather Data</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Condition</th>
+                                <th>Temp (°C)</th>
+                                <th>Rainfall (mm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in weather_data.historical_data %}
+                            <tr>
+                                <td>{{ day.date }}</td>
+                                <td>{{ day.condition }}</td>
+                                <td>{{ day.temperature|default(day.temperature_c, '--') }}</td>
+                                <td>{{ day.rainfall|default(day.rainfall_mm, '--') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <h6 class="border-bottom pb-2">Historical Patterns</h6>
+                    <p>{{ weather_data.agricultural_impact.historical_impact|default('No historical impact data available.') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-body text-center p-5">
+                <i class="fas fa-cloud-sun-rain fa-6x text-info mb-4"></i>
+                <h4>No Weather Data Available</h4>
+                <p class="text-muted">Enter a location above to view weather data and agricultural recommendations.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add any weather-specific JavaScript here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Example: You could add charts for historical weather data
+        // or other interactive elements
+    });
+</script>
+{% endblock %} 
+</body>
+</html>

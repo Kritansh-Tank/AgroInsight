@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroInsight</title>
+  </head>
+  <body>
+    {% extends "layout.html" %} {% block title %}Analyze Farm{% endblock %} {%
+    block content %}
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-microscope me-2"></i>Farm Analysis
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-4">
+              Enter details about your farm to receive a comprehensive analysis
+              and recommendations.
+            </p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %} {%
+            if messages %} {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show">
+              {{ message }}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+              ></button>
+            </div>
+            {% endfor %} {% endif %} {% endwith %}
+
+            <form method="post" action="{{ url_for('analyze_farm') }}">
+              <div class="row mb-4">
+                <h5 class="border-bottom pb-2 mb-3">Basic Information</h5>
+
+                <div class="col-md-6 mb-3">
+                  <label for="farm_name" class="form-label">Farm Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="farm_name"
+                    name="farm_name"
+                    required
+                  />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="location" class="form-label">Location</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="location"
+                    name="location"
+                    placeholder="City, Country"
+                    required
+                  />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="farm_size" class="form-label"
+                    >Farm Size (hectares)</label
+                  >
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    class="form-control"
+                    id="farm_size"
+                    name="farm_size"
+                    required
+                  />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="farm_type" class="form-label">Farm Type</label>
+                  <select
+                    class="form-select"
+                    id="farm_type"
+                    name="farm_type"
+                    required
+                  >
+                    <option value="">Select farm type</option>
+                    <option value="crop">Crop Farm</option>
+                    <option value="livestock">Livestock Farm</option>
+                    <option value="mixed">Mixed Farm</option>
+                    <option value="orchard">Orchard</option>
+                    <option value="vegetable">Vegetable Farm</option>
+                    <option value="organic">Organic Farm</option>
+                  </select>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="farming_experience" class="form-label"
+                    >Farming Experience (years)</label
+                  >
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    class="form-control"
+                    id="farming_experience"
+                    name="farming_experience"
+                  />
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <h5 class="border-bottom pb-2 mb-3">Soil & Climate</h5>
+
+                <div class="col-md-4 mb-3">
+                  <label for="soil_type" class="form-label">Soil Type</label>
+                  <select
+                    class="form-select"
+                    id="soil_type"
+                    name="soil_type"
+                    required
+                  >
+                    <option value="">Select soil type</option>
+                    <option value="clay">Clay</option>
+                    <option value="sandy">Sandy</option>
+                    <option value="loamy">Loamy</option>
+                    <option value="silt">Silt</option>
+                    <option value="peaty">Peaty</option>
+                    <option value="chalky">Chalky</option>
+                  </select>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="soil_ph" class="form-label">Soil pH</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="3.0"
+                    max="10.0"
+                    class="form-control"
+                    id="soil_ph"
+                    name="soil_ph"
+                    placeholder="6.0-7.5"
+                  />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="climate_zone" class="form-label"
+                    >Climate Zone</label
+                  >
+                  <select
+                    class="form-select"
+                    id="climate_zone"
+                    name="climate_zone"
+                  >
+                    <option value="">Select climate zone</option>
+                    <option value="tropical">Tropical</option>
+                    <option value="dry">Dry (Arid/Semi-Arid)</option>
+                    <option value="temperate">Temperate</option>
+                    <option value="continental">Continental</option>
+                    <option value="polar">Polar</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="annual_rainfall" class="form-label"
+                    >Annual Rainfall (mm)</label
+                  >
+                  <input
+                    type="number"
+                    min="0"
+                    max="5000"
+                    class="form-control"
+                    id="annual_rainfall"
+                    name="annual_rainfall"
+                  />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="avg_temperature" class="form-label"
+                    >Average Temperature (°C)</label
+                  >
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="-20"
+                    max="50"
+                    class="form-control"
+                    id="avg_temperature"
+                    name="avg_temperature"
+                  />
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <h5 class="border-bottom pb-2 mb-3">Current Practices</h5>
+
+                <div class="col-md-4 mb-3">
+                  <label for="main_crops" class="form-label"
+                    >Main Crops/Livestock</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="main_crops"
+                    name="main_crops"
+                    placeholder="e.g., Corn, Wheat, Cattle"
+                  />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="irrigation_system" class="form-label"
+                    >Irrigation System</label
+                  >
+                  <select
+                    class="form-select"
+                    id="irrigation_system"
+                    name="irrigation_system"
+                  >
+                    <option value="">Select irrigation system</option>
+                    <option value="none">None</option>
+                    <option value="drip">Drip Irrigation</option>
+                    <option value="sprinkler">Sprinkler System</option>
+                    <option value="flood">Flood Irrigation</option>
+                    <option value="center_pivot">Center Pivot</option>
+                  </select>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="fertilizer_use" class="form-label"
+                    >Fertilizer Use</label
+                  >
+                  <select
+                    class="form-select"
+                    id="fertilizer_use"
+                    name="fertilizer_use"
+                  >
+                    <option value="">Select fertilizer use</option>
+                    <option value="none">None</option>
+                    <option value="organic">Organic Only</option>
+                    <option value="chemical">Chemical Only</option>
+                    <option value="mixed">Mixed (Organic & Chemical)</option>
+                  </select>
+                </div>
+
+                <div class="col-12 mb-3">
+                  <label class="form-label"
+                    >Sustainable Practices (select all that apply)</label
+                  >
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="crop_rotation"
+                          name="sustainable_practices"
+                          value="crop_rotation"
+                        />
+                        <label class="form-check-label" for="crop_rotation"
+                          >Crop Rotation</label
+                        >
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="cover_crops"
+                          name="sustainable_practices"
+                          value="cover_crops"
+                        />
+                        <label class="form-check-label" for="cover_crops"
+                          >Cover Crops</label
+                        >
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="no_till"
+                          name="sustainable_practices"
+                          value="no_till"
+                        />
+                        <label class="form-check-label" for="no_till"
+                          >No-Till Farming</label
+                        >
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="integrated_pest"
+                          name="sustainable_practices"
+                          value="integrated_pest"
+                        />
+                        <label class="form-check-label" for="integrated_pest"
+                          >Integrated Pest Management</label
+                        >
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="water_conservation"
+                          name="sustainable_practices"
+                          value="water_conservation"
+                        />
+                        <label class="form-check-label" for="water_conservation"
+                          >Water Conservation</label
+                        >
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          id="renewable_energy"
+                          name="sustainable_practices"
+                          value="renewable_energy"
+                        />
+                        <label class="form-check-label" for="renewable_energy"
+                          >Renewable Energy Use</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <h5 class="border-bottom pb-2 mb-3">Goals & Challenges</h5>
+
+                <div class="col-md-6 mb-3">
+                  <label for="primary_goal" class="form-label"
+                    >Primary Goal</label
+                  >
+                  <select
+                    class="form-select"
+                    id="primary_goal"
+                    name="primary_goal"
+                  >
+                    <option value="">Select primary goal</option>
+                    <option value="yield_increase">Increase Yield</option>
+                    <option value="cost_reduction">Reduce Costs</option>
+                    <option value="sustainability">
+                      Improve Sustainability
+                    </option>
+                    <option value="diversification">
+                      Farm Diversification
+                    </option>
+                    <option value="quality">Improve Product Quality</option>
+                    <option value="market_access">Better Market Access</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="main_challenge" class="form-label"
+                    >Main Challenge</label
+                  >
+                  <select
+                    class="form-select"
+                    id="main_challenge"
+                    name="main_challenge"
+                  >
+                    <option value="">Select main challenge</option>
+                    <option value="water_scarcity">Water Scarcity</option>
+                    <option value="soil_degradation">Soil Degradation</option>
+                    <option value="pests">Pests & Diseases</option>
+                    <option value="weather">Extreme Weather</option>
+                    <option value="labor">Labor Shortages</option>
+                    <option value="market_access">Market Access</option>
+                    <option value="costs">High Operating Costs</option>
+                  </select>
+                </div>
+
+                <div class="col-12 mb-3">
+                  <label for="additional_notes" class="form-label"
+                    >Additional Notes</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="additional_notes"
+                    name="additional_notes"
+                    rows="3"
+                    placeholder="Any other important information about your farm..."
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="reset" class="btn btn-outline-secondary me-md-2">
+                  Reset Form
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-microscope me-2"></i>Analyze Farm
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Farm Analysis Results Section -->
+    {% if analysis_results %}
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="card">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+              <i class="fas fa-clipboard-check me-2"></i>Farm Analysis Results
+            </h5>
+          </div>
+          <div class="card-body">
+            <!-- Farm Parameters Summary -->
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <h5 class="border-bottom pb-2">Farm Parameters</h5>
+                <div class="row">
+                  <div class="col-md-3">
+                    <p><strong>Soil pH:</strong> {{ analysis_results.farm_parameters.soil_ph }}</p>
+                  </div>
+                  <div class="col-md-3">
+                    <p><strong>Soil Moisture:</strong> {{ analysis_results.farm_parameters.soil_moisture }}%</p>
+                  </div>
+                  <div class="col-md-3">
+                    <p><strong>Temperature:</strong> {{ analysis_results.farm_parameters.temperature }}°C</p>
+                  </div>
+                  <div class="col-md-3">
+                    <p><strong>Rainfall:</strong> {{ analysis_results.farm_parameters.rainfall }} mm</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Soil Analysis -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="card h-100">
+                  <div class="card-header">
+                    <h5 class="mb-0">Soil Analysis</h5>
+                  </div>
+                  <div class="card-body">
+                    <p><strong>pH Status:</strong> {{ analysis_results.ph_status }}</p>
+                    <p><strong>Moisture Status:</strong> {{ analysis_results.moisture_status }}</p>
+                    
+                    {% if analysis_results.soil_recommendations %}
+                    <h6 class="mt-3">Soil Recommendations:</h6>
+                    <ul class="list-group">
+                      {% for rec in analysis_results.soil_recommendations %}
+                      <li class="list-group-item">
+                        <strong>{{ rec.issue }}:</strong> {{ rec.action }}
+                      </li>
+                      {% endfor %}
+                    </ul>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Climate Analysis -->
+              <div class="col-md-6">
+                <div class="card h-100">
+                  <div class="card-header">
+                    <h5 class="mb-0">Climate Analysis</h5>
+                  </div>
+                  <div class="card-body">
+                    <p><strong>Temperature Category:</strong> {{ analysis_results.temperature_category }}</p>
+                    <p><strong>Rainfall Category:</strong> {{ analysis_results.rainfall_category }}</p>
+                    
+                    {% if analysis_results.suitable_crops %}
+                    <h6 class="mt-3">Suitable Crops Based on Climate:</h6>
+                    <p>{{ analysis_results.suitable_crops|join(', ') }}</p>
+                    {% endif %}
+                    
+                    {% if analysis_results.climate_recommendations %}
+                    <h6 class="mt-3">Climate Recommendations:</h6>
+                    <ul class="list-group">
+                      {% for rec in analysis_results.climate_recommendations %}
+                      <li class="list-group-item">
+                        <strong>{{ rec.issue }}:</strong> {{ rec.action }}
+                      </li>
+                      {% endfor %}
+                    </ul>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Recommended Crops -->
+            {% if analysis_results.recommended_crops %}
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Recommended Crops (Market & Climate Matched)</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Crop</th>
+                            <th>Economic Potential</th>
+                            <th>Market Recommendation</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for crop in analysis_results.recommended_crops %}
+                          <tr>
+                            <td>{{ crop.crop }}</td>
+                            <td>{{ crop.economic_potential }}</td>
+                            <td>{{ crop.market_recommendation }}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            
+            <!-- Weather Forecast and Agricultural Impact if available -->
+            {% if analysis_results.weather_forecast %}
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Weather Forecast</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-sm table-hover">
+                        <thead>
+                          <tr>
+                            <th>Day</th>
+                            <th>Date</th>
+                            <th>Condition</th>
+                            <th>Temperature</th>
+                            <th>Rainfall</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for day in analysis_results.weather_forecast %}
+                          <tr>
+                            <td>Day {{ day.day }}</td>
+                            <td>{{ day.date }}</td>
+                            <td>{{ day.condition }}</td>
+                            <td>{{ day.temperature_high_c }}°C / {{ day.temperature_low_c }}°C</td>
+                            <td>{{ day.rainfall_mm }} mm</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            
+            {% if analysis_results.agricultural_impact %}
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Agricultural Impact</h5>
+                  </div>
+                  <div class="card-body">
+                    <p><strong>Overall Impact:</strong> {{ analysis_results.agricultural_impact.overall_impact }}</p>
+                    <p><strong>Temperature Impact:</strong> {{ analysis_results.agricultural_impact.temperature_impact }}</p>
+                    <p><strong>Rainfall Impact:</strong> {{ analysis_results.agricultural_impact.rainfall_impact }}</p>
+                    
+                    {% if analysis_results.agricultural_impact.recommendations %}
+                    <h6 class="mt-3">Key Recommendations:</h6>
+                    <ul class="list-group">
+                      {% for rec in analysis_results.agricultural_impact.recommendations %}
+                      <li class="list-group-item">
+                        <strong>{{ rec.issue }}:</strong> {{ rec.action }}
+                      </li>
+                      {% endfor %}
+                    </ul>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            
+            <!-- Get detailed recommendations button -->
+            <div class="mt-4 text-center">
+              <a href="{{ url_for('farm_recommendations') }}" class="btn btn-success btn-lg">
+                <i class="fas fa-lightbulb me-2"></i>Get Detailed Recommendations
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %} {% endblock %} {% block scripts %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Form validation
+        const form = document.querySelector("form");
+        if (form) {
+          form.addEventListener("submit", function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add("was-validated");
+          });
+        }
+      });
+    </script>
+    {% endblock %}
+  </body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroInsight</title>
+  </head>
+  <body>
+    {% extends 'layout.html' %} {% block title %}Sustainability Comparison{%
+    endblock %} {% block content %}
+    <div class="container-fluid px-4">
+      <h1 class="mt-4">
+        <i class="fas fa-balance-scale me-2"></i>Farm Sustainability Comparison
+      </h1>
+      <p class="lead">
+        Compare sustainability metrics across different farms to identify best
+        practices and opportunities for improvement.
+      </p>
+
+      {% if comparison %}
+      <div class="row mt-4">
+        <!-- Overall Sustainability Stats -->
+        <div class="col-xl-12 mb-4">
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+              <h5 class="m-0">Sustainability Overview</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3 mb-3">
+                  <div class="card h-100 bg-light">
+                    <div class="card-body text-center">
+                      <h2 class="display-4">
+                        {{
+                        "%.1f"|format(comparison.overall_stats.avg_sustainability_score)
+                        }}
+                      </h2>
+                      <p class="lead">Average Sustainability Score</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <div class="card h-100 bg-light">
+                    <div class="card-body text-center">
+                      <h2 class="display-4">
+                        {{ comparison.overall_stats.count }}
+                      </h2>
+                      <p class="lead">Total Farms</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <div class="card h-100 bg-light">
+                    <div class="card-body text-center">
+                      <h2 class="display-4">
+                        {{
+                        "%.1f"|format(comparison.overall_stats.min_sustainability_score)
+                        }}
+                      </h2>
+                      <p class="lead">Minimum Score</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <div class="card h-100 bg-light">
+                    <div class="card-body text-center">
+                      <h2 class="display-4">
+                        {{
+                        "%.1f"|format(comparison.overall_stats.max_sustainability_score)
+                        }}
+                      </h2>
+                      <p class="lead">Maximum Score</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Crop Type Comparison -->
+        {% if comparison.crop_comparison %}
+        <div class="col-xl-6 mb-4">
+          <div class="card shadow h-100">
+            <div class="card-header bg-success text-white">
+              <h5 class="m-0">Sustainability by Crop Type</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Crop Type</th>
+                      <th>Average Score</th>
+                      <th>Farm Count</th>
+                      <th>Visualization</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for crop in comparison.crop_comparison %}
+                    <tr>
+                      <td><strong>{{ crop.crop_type|capitalize }}</strong></td>
+                      <td>
+                        {{ "%.1f"|format(crop.avg_sustainability_score) }}
+                      </td>
+                      <td>{{ crop.farm_count }}</td>
+                      <td>
+                        <div class="progress" style="height: 8px">
+                          <div
+                            class="progress-bar {% if crop.avg_sustainability_score >= 80 %}bg-success{% elif crop.avg_sustainability_score >= 60 %}bg-info{% elif crop.avg_sustainability_score >= 40 %}bg-warning{% else %}bg-danger{% endif %}"
+                            role="progressbar"
+                            style="width: {{ crop.avg_sustainability_score }}%"
+                          ></div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Efficiency Stats -->
+        <div
+          class="col-xl-{% if comparison.crop_comparison %}6{% else %}12{% endif %} mb-4"
+        >
+          <div class="card shadow h-100">
+            <div class="card-header bg-info text-white">
+              <h5 class="m-0">Resource Efficiency Metrics</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="card h-100 bg-light">
+                    <div class="card-body">
+                      <h5 class="card-title">Fertilizer Efficiency</h5>
+                      <p class="lead">
+                        {{
+                        "%.2f"|format(comparison.efficiency_stats.avg_fertilizer_efficiency)
+                        }}
+                      </p>
+                      <p class="text-muted">
+                        Yield (tons) per kg of fertilizer used
+                      </p>
+                      <div class="progress mt-2" style="height: 8px">
+                        <div
+                          class="progress-bar bg-success"
+                          role="progressbar"
+                          style="width: {{ comparison.efficiency_stats.avg_fertilizer_efficiency * 10|min_value(100) }}%"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="card h-100 bg-light">
+                    <div class="card-body">
+                      <h5 class="card-title">Pesticide Efficiency</h5>
+                      <p class="lead">
+                        {{
+                        "%.2f"|format(comparison.efficiency_stats.avg_pesticide_efficiency)
+                        }}
+                      </p>
+                      <p class="text-muted">
+                        Yield (tons) per kg of pesticide used
+                      </p>
+                      <div class="progress mt-2" style="height: 8px">
+                        <div
+                          class="progress-bar bg-success"
+                          role="progressbar"
+                          style="width: {{ comparison.efficiency_stats.avg_pesticide_efficiency * 10|min_value(100) }}%"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Best Practices -->
+      {% if comparison.efficiency_stats.best_practices %}
+      <div class="row">
+        <div class="col-xl-12 mb-4">
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+              <h5 class="m-0">Top Performing Farms - Best Practices</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Farm ID</th>
+                      <th>Crop Type</th>
+                      <th>Sustainability Score</th>
+                      <th>Fertilizer Efficiency</th>
+                      <th>Pesticide Efficiency</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for farm in comparison.efficiency_stats.best_practices %}
+                    <tr>
+                      <td><strong>Farm #{{ farm.farm_id }}</strong></td>
+                      <td>{{ farm.crop_type|capitalize }}</td>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div
+                            style="
+                              width: 40px;
+                              text-align: right;
+                              margin-right: 10px;
+                            "
+                          >
+                            {{ "%.1f"|format(farm.sustainability_score) }}
+                          </div>
+                          <div class="progress flex-grow-1" style="height: 8px">
+                            <div
+                              class="progress-bar {% if farm.sustainability_score >= 80 %}bg-success{% elif farm.sustainability_score >= 60 %}bg-info{% elif farm.sustainability_score >= 40 %}bg-warning{% else %}bg-danger{% endif %}"
+                              role="progressbar"
+                              style="width: {{ farm.sustainability_score }}%"
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{{ "%.2f"|format(farm.fertilizer_efficiency) }}</td>
+                      <td>{{ "%.2f"|format(farm.pesticide_efficiency) }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Improvement Opportunities Section -->
+      {% if comparison.improvement_potential %}
+      <div class="row">
+        <div class="col-xl-12 mb-4">
+          <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+              <h5 class="m-0">Improvement Opportunities</h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                {% for category, potential in
+                comparison.improvement_potential.items() %}
+                <div class="col-md-4 mb-3">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h6 class="mb-0">
+                        {{ category|replace('_', ' ')|title }}
+                      </h6>
+                    </div>
+                    <div class="card-body">
+                      <p class="lead text-center">
+                        {{ "%.1f"|format(potential.potential_improvement) }}%
+                      </p>
+                      <p>{{ potential.description }}</p>
+                      <ul class="list-group list-group-flush">
+                        {% for practice in potential.recommended_practices %}
+                        <li class="list-group-item">{{ practice }}</li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %} {% else %}
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body text-center p-5">
+              <i class="fas fa-chart-line fa-5x text-secondary mb-4"></i>
+              <h4>No Comparison Data Available</h4>
+              <p class="text-muted">
+                The system could not generate sustainability comparison data at
+                this time.
+              </p>
+              <p>
+                This could be due to insufficient farm data or database
+                connectivity issues.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endblock %} {% block scripts %}
+    <script>
+      // Add charts if data is available
+      {% if comparison %}
+      document.addEventListener('DOMContentLoaded', function() {
+          // You can add Chart.js charts here if needed
+      });
+      {% endif %}
+    </script>
+    {% endblock %}
+  </body>
+</html>

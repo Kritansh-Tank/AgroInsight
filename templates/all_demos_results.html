@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroInsight</title>
+  </head>
+  <body>
+    {% extends 'layout.html' %} {% block title %}Demo Results - AgroInsight AI{%
+    endblock %} {% block content %}
+    <div class="container py-4">
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+              <h5 class="my-0">
+                <i class="fas fa-check-circle me-2"></i>Demonstration Results
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>All system components
+                tested successfully.
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <p>
+                    <strong>Execution Time:</strong> {{ results.execution_time
+                    }} seconds
+                  </p>
+                  <p><strong>Timestamp:</strong> {{ results.timestamp }}</p>
+                  <p>
+                    <strong>System Status:</strong>
+                    <span class="badge bg-success"
+                      >{{ results.system_status }}</span
+                    >
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <h6>System Metrics:</h6>
+                  <ul class="list-unstyled">
+                    <li>
+                      <strong>Memory Usage:</strong> {{
+                      results.system_metrics.memory_usage }}
+                    </li>
+                    <li>
+                      <strong>CPU Usage:</strong> {{
+                      results.system_metrics.cpu_usage }}
+                    </li>
+                    <li>
+                      <strong>Avg Response Time:</strong> {{
+                      results.system_metrics.response_time_avg }}
+                    </li>
+                    <li>
+                      <strong>Database Operations:</strong> {{
+                      results.system_metrics.database_operations }}
+                    </li>
+                    <li>
+                      <strong>Messages Processed:</strong> {{
+                      results.system_metrics.messages_processed }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+              <h5 class="my-0">
+                <i class="fas fa-server me-2"></i>Component Status
+              </h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Component</th>
+                      <th>Status</th>
+                      <th>Response Time</th>
+                      <th>Activity</th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for component in results.components %}
+                    <tr>
+                      <td><strong>{{ component.name }}</strong></td>
+                      <td>
+                        <span class="badge bg-success"
+                          >{{ component.status }}</span
+                        >
+                      </td>
+                      <td>{{ component.response_time }}s</td>
+                      <td>
+                        {% if component.messages_processed is defined %} {{
+                        component.messages_processed }} messages {% elif
+                        component.operations is defined %} {{
+                        component.operations }} operations {% elif
+                        component.messages_routed is defined %} {{
+                        component.messages_routed }} messages {% else %} - {%
+                        endif %}
+                      </td>
+                      <td>{{ component.details }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+              <h5 class="my-0">
+                <i class="fas fa-exchange-alt me-2"></i>Agent Communication Log
+              </h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Time</th>
+                      <th>From</th>
+                      <th>To</th>
+                      <th>Message</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for message in results.agent_messages %}
+                    <tr>
+                      <td>{{ message.formatted_time }}</td>
+                      <td>
+                        <span class="badge bg-secondary"
+                          >{{ message.from }}</span
+                        >
+                      </td>
+                      <td>
+                        <span class="badge bg-secondary">{{ message.to }}</span>
+                      </td>
+                      <td>{{ message.message }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+              <h5 class="my-0"><i class="fas fa-vial me-2"></i>Test Results</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Test Name</th>
+                      <th>Status</th>
+                      <th>Execution Time</th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for test in results.test_results %}
+                    <tr>
+                      <td><strong>{{ test.test_name }}</strong></td>
+                      <td>
+                        <span
+                          class="badge {% if test.status == 'passed' %}bg-success{% else %}bg-danger{% endif %}"
+                        >
+                          {{ test.status }}
+                        </span>
+                      </td>
+                      <td>{{ test.execution_time }}s</td>
+                      <td>{{ test.details }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+          <i class="fas fa-arrow-left me-2"></i>Return to Dashboard
+        </a>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+</html>

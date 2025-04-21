@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroInsight</title>
+  </head>
+  <body>
+    {% extends 'layout.html' %} {% block title %}Ollama LLM Integration{%
+    endblock %} {% block content %}
+    <div class="container-fluid px-4">
+      <h1 class="mt-4">
+        <i class="fas fa-brain me-2"></i>Ollama LLM Integration
+      </h1>
+
+      {% if error_message %}
+      <div class="alert alert-danger">
+        <strong>Error:</strong> {{ error_message }}
+      </div>
+      {% endif %}
+
+      <div class="row mt-4">
+        <div class="col-md-4 mb-4">
+          <!-- Model Selection Panel -->
+          <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+              <h5 class="m-0">LLM Configuration</h5>
+            </div>
+            <div class="card-body">
+              <form
+                method="post"
+                action="{{ url_for('ollama_llm') }}"
+                id="llm-form"
+              >
+                <input type="hidden" name="model" value="qwen2.5:0.5b" />
+                <input type="hidden" name="temperature" value="0.7" />
+                <input type="hidden" name="max_tokens" value="500" />
+
+                <div class="mb-3">
+                  <label for="prompt" class="form-label">Your Query</label>
+                  <textarea
+                    class="form-control"
+                    id="prompt"
+                    name="prompt"
+                    rows="4"
+                    placeholder="Enter your agricultural query or request..."
+                    required
+                  >
+{{ prompt }}</textarea
+                  >
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-bolt me-2"></i>Generate Response
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-8 mb-4">
+          <!-- Response Panel -->
+          <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+              <h5 class="m-0">AI Response</h5>
+            </div>
+            <div class="card-body">
+              {% if not response %}
+              <div class="text-center py-5 text-muted">
+                <i class="fas fa-robot fa-3x mb-3"></i>
+                <h5>Enter a query to receive AI-generated insights</h5>
+                <div class="mt-4">
+                  <h6>Example Queries:</h6>
+                  <ul class="list-unstyled">
+                    <li>
+                      <a href="#" class="example-query"
+                        >What are the best cover crops for improving soil
+                        health?</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#" class="example-query"
+                        >How can I implement water conservation techniques in my
+                        farm?</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#" class="example-query"
+                        >Explain sustainable pest management practices for
+                        organic farming.</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#" class="example-query"
+                        >What technology innovations are improving agricultural
+                        sustainability?</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              {% else %}
+              <div class="response-container p-3">
+                <div class="response-header mb-3 pb-2 border-bottom">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <div>
+                      <span class="badge bg-primary me-2">QWEN2.5:0.5B</span>
+                      <small class="text-muted">Ollama API</small>
+                    </div>
+                    <button
+                      class="btn btn-sm btn-outline-secondary"
+                      onclick="copyResponse()"
+                    >
+                      <i class="fas fa-copy"></i> Copy
+                    </button>
+                  </div>
+                </div>
+                <div class="response-content" id="response-text">
+                  {{ response|nl2br|safe }}
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% block scripts %}
+    <script>
+      // Handle example queries
+      document.querySelectorAll(".example-query").forEach((el) => {
+        el.addEventListener("click", function (e) {
+          e.preventDefault();
+          document.getElementById("prompt").value = this.textContent;
+          document.getElementById("prompt").focus();
+        });
+      });
+
+      // Copy response to clipboard
+      function copyResponse() {
+        const responseText = document.getElementById("response-text").innerText;
+        navigator.clipboard
+          .writeText(responseText)
+          .then(() => {
+            alert("Response copied to clipboard");
+          })
+          .catch((err) => {
+            console.error("Failed to copy: ", err);
+          });
+      }
+    </script>
+    {% endblock %} {% endblock %}
+  </body>
+</html>

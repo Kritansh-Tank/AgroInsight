@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroInsight</title>
+  </head>
+  <body>
+    {% extends "layout.html" %} {% block page_title %}AgroInsight - Sustainable
+    Farming Intelligence{% endblock %} {% block page_subtitle %}Make data-driven
+    decisions to optimize your farming practices with AI-powered insights and
+    recommendations{% endblock %} {% block content %}
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h4 class="mb-3">Welcome to AgroInsight!</h4>
+            <p>
+              AgroInsight is a comprehensive multi-agent system designed to help
+              farmers make sustainable, data-driven decisions. Our platform
+              combines weather forecasting, market research, and agricultural
+              expertise to provide actionable insights for optimizing farming
+              practices.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mb-4">Explore Our Features</h3>
+    <div class="row">
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h5 class="card-title">Market Data</h5>
+            <p class="card-text">
+              Access real-time market analyses for various crops, with profit
+              potential forecasts and price trends.
+            </p>
+            <a href="/market_data" class="btn btn-primary btn-sm">Explore</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <div class="feature-icon">
+              <i class="fas fa-cloud-sun"></i>
+            </div>
+            <h5 class="card-title">Weather Data</h5>
+            <p class="card-text">
+              Get region-specific weather forecasts and agricultural impact
+              assessments for informed planning.
+            </p>
+            <a href="/weather_data" class="btn btn-primary btn-sm">Explore</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <div class="feature-icon">
+              <i class="fas fa-microscope"></i>
+            </div>
+            <h5 class="card-title">Analyze New Farm</h5>
+            <p class="card-text">
+              Input soil and climate data to receive customized analyses and
+              crop recommendations for new farms.
+            </p>
+            <a href="/analyze_farm" class="btn btn-primary btn-sm">Explore</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <div class="feature-icon">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <h5 class="card-title">Farm Recommendations</h5>
+            <p class="card-text">
+              Generate comprehensive recommendations to enhance sustainability
+              and profitability for existing farms.
+            </p>
+            <a href="/farm_recommendations" class="btn btn-primary btn-sm"
+              >Explore</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <div class="feature-icon">
+              <i class="fas fa-balance-scale"></i>
+            </div>
+            <h5 class="card-title">Sustainability Comparison</h5>
+            <p class="card-text">
+              Compare sustainability metrics across farms and crops to identify
+              best practices in resource efficiency.
+            </p>
+            <a href="/sustainability_comparison" class="btn btn-primary btn-sm"
+              >Explore</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <div class="feature-icon">
+              <i class="fas fa-comment-dots"></i>
+            </div>
+            <h5 class="card-title">Agent Communication</h5>
+            <p class="card-text">
+              Observe how our specialized AI agents collaborate to deliver
+              coordinated farming insights.
+            </p>
+            <a href="/agent_communication" class="btn btn-primary btn-sm"
+              >Explore</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-xl-3 mb-4">
+        <div class="card h-100">
+          <div class="card-body text-center">
+            <div class="feature-icon">
+              <i class="fas fa-robot"></i>
+            </div>
+            <h5 class="card-title">Ollama LLM Integration</h5>
+            <p class="card-text">
+              Experience farm analyses enhanced by our Qwen2.5 large language
+              model on Ollama.
+            </p>
+            <a href="/ollama_llm" class="btn btn-primary btn-sm">Explore</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+</html>

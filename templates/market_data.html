@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroInsight</title>
+  </head>
+  <body>
+    {% extends "layout.html" %}
+
+    {% block title %}Market Data{% endblock %}
+
+    {% block content %}
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-chart-line me-2"></i>Market Data Analysis
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-4">Get insights on agricultural market trends and prices.</p>
+
+            <form method="post" action="{{ url_for('market_data') }}" class="mb-4">
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label for="product" class="form-label">Product</label>
+                  <select class="form-select" id="product" name="product">
+                    <option value="general_overview" {% if not product or product == "general_overview" %}selected{% endif %}>General Market Overview</option>
+                    {% for product_item in products %}
+                      <option value="{{ product_item }}" {% if product == product_item %}selected{% endif %}>{{ product_item }}</option>
+                    {% endfor %}
+                  </select>
+                  <div class="form-text">Select a specific product or view the general market overview</div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="time_period" class="form-label">Time Period</label>
+                  <select class="form-select" id="time_period" name="time_period">
+                    <option value="recent" {% if time_period == 'recent' %}selected{% endif %}>Recent (Last 30 days)</option>
+                    <option value="monthly" {% if time_period == 'monthly' %}selected{% endif %}>Monthly Trend</option>
+                    <option value="seasonal" {% if time_period == 'seasonal' %}selected{% endif %}>Seasonal Analysis</option>
+                    <option value="yearly" {% if time_period == 'yearly' %}selected{% endif %}>Yearly Comparison</option>
+                  </select>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                  <label for="region" class="form-label">Region</label>
+                  <select class="form-select" id="region" name="region">
+                    <option value="local" {% if region == 'local' %}selected{% endif %}>Local Markets</option>
+                    <option value="regional" {% if region == 'regional' %}selected{% endif %}>Regional Markets</option>
+                    <option value="national" {% if region == 'national' %}selected{% endif %}>National Markets</option>
+                    <option value="global" {% if region == 'global' %}selected{% endif %}>Global Markets</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-search me-2"></i>Analyze Market Data
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Data Results -->
+    {% if market_data %}
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="card">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+              {% if market_data.product != "General Overview" %}
+                <i class="fas fa-chart-bar me-2"></i>Market Analysis for {{ market_data.product }}
+              {% else %}
+                <i class="fas fa-chart-line me-2"></i>General Market Overview
+              {% endif %}
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="badge bg-info">{{ market_data.time_period|replace('_', ' ')|title }} Analysis</span>
+                <span class="badge bg-secondary">{{ market_data.region|replace('_', ' ')|title }} Markets</span>
+                {% if market_data.is_organic %}
+                  <span class="badge bg-success">Organic</span>
+                {% endif %}
+              </div>
+
+              {% if market_data.product != "General Overview" %}
+              <!-- For specific crop analysis, show only Price Trends -->
+              <div class="row">
+                <div class="col-md-12 mb-4">
+                  <h6 class="border-bottom pb-2">
+                    <i class="fas fa-chart-line me-2"></i>Price Trends
+                  </h6>
+                  <p>{{ market_data.price_trend|nl2br }}</p>
+                </div>
+              </div>
+              {% elif market_data.market_insights %}
+              <!-- For general overview, show only Market Insights -->
+              <div class="row">
+                <div class="col-md-12 mb-4">
+                  <h6 class="border-bottom pb-2">
+                    <i class="fas fa-lightbulb me-2"></i>Market Insights
+                  </h6>
+                  <p>{{ market_data.market_insights|nl2br }}</p>
+                </div>
+              </div>
+              {% endif %}
+
+              {% if market_data.demand_forecast %}
+              <div class="mb-4">
+                <h6 class="border-bottom pb-2">
+                  <i class="fas fa-binoculars me-2"></i>Demand Forecast
+                </h6>
+                <p>{{ market_data.demand_forecast }}</p>
+              </div>
+              {% endif %}
+
+              {% if market_data.recommendations %}
+              <div>
+                <h6 class="border-bottom pb-2">
+                  <i class="fas fa-clipboard-list me-2"></i>Market Recommendations
+                </h6>
+                <div class="row">
+                  {% for recommendation in market_data.recommendations %}
+                  <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100 border-left-primary">
+                      <div class="card-body">
+                        <p class="card-text">{{ recommendation }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <!-- No Data State -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="py-5">
+              <i class="fas fa-chart-bar fa-5x text-secondary mb-3"></i>
+              <h4>No Market Data to Display</h4>
+              <p class="text-muted">Use the form above to query market data for specific products or get a general market overview.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endblock %}
+  </body>
+</html>
