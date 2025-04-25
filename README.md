@@ -2,7 +2,7 @@
 
 A data-driven multi-agent AI system designed to promote sustainable farming practices by bringing together farmers, weather forecasts, and market research to optimize agricultural decisions.
 
-## Project Overview
+## Overview
 
 This system combines three specialized AI agents that collaborate to provide comprehensive recommendations for sustainable farming:
 
