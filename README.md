@@ -212,7 +212,7 @@ Potential future enhancements include:
 - **Mobile App Interface**: Develop a companion mobile application for field use.
 - **Recommendation History Tracking**: Track implementation and outcomes of recommendations over time.
 
-## Demo
+## User Interface
 
 - **Home**
 
@@ -249,3 +249,4 @@ Potential future enhancements include:
 ## License
 
 MIT License - See LICENSE file for details
+
