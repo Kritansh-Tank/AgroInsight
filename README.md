@@ -115,13 +115,6 @@ Access the web interface through your browser at `http://127.0.0.1:5000/` which 
 7. **Agent Communication**: Direct interaction with the AI agents through a chat interface.
 8. **LLM Integration**: Access to AI-driven insights through the Ollama integration.
 
-## Data
-
-The system comes with sample datasets for demonstration purposes:
-
-- `farmer_advisor_dataset.csv`: Contains farm data including soil conditions, crop types, and sustainability scores.
-- `market_researcher_dataset.csv`: Contains market data including prices, demand, and supply for various crops.
-
 ## Project Structure
 
 ```
@@ -219,10 +212,6 @@ Potential future enhancements include:
 - **Mobile App Interface**: Develop a companion mobile application for field use.
 - **Recommendation History Tracking**: Track implementation and outcomes of recommendations over time.
 
-## License
-
-[MIT License](LICENSE)
-
 ## Demo
 
 - **Home**
@@ -256,3 +245,7 @@ Potential future enhancements include:
 - **Ollama LLM Integration**
 
 ![Ollama LLM Integration](docs/images/Ollama_LLM_Integration.png)
+
+## License
+
+MIT License - See LICENSE file for details
